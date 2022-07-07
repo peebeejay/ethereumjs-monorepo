@@ -34,7 +34,6 @@ import {
 } from './types'
 import { EEIInterface } from './types'
 import TransientStorage from './transientStorage'
-import { options } from 'benchmark'
 
 const debug = createDebugLogger('vm:evm')
 const debugGas = createDebugLogger('vm:evm:gas')
