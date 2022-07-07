@@ -34,6 +34,7 @@ import {
 } from './types'
 import { EEIInterface } from './types'
 import TransientStorage from './transientStorage'
+import { options } from 'benchmark'
 
 const debug = createDebugLogger('vm:evm')
 const debugGas = createDebugLogger('vm:evm:gas')
@@ -368,7 +369,14 @@ export default class EVM extends AsyncEventEmitter<EVMEvents> implements EVMInte
     }
     if (message.depth === 0) {
       account.nonce += BigInt(1)
+      // Check account balance and zero if negative
+      if (account.balance < BigInt(0)) {
+        account.balance = BigInt(0)
+      }
       await this.eei.putAccount(message.authcallOrigin ?? message.caller, account)
+      if (this.DEBUG) {
+        debug(`Incrementing calling account nonce to ${account.nonce}`)
+      }
     }
     if (exit) {
       return {
@@ -432,7 +440,9 @@ export default class EVM extends AsyncEventEmitter<EVMEvents> implements EVMInte
 
     account.nonce += BigInt(1)
     await this.eei.putAccount(message.authcallOrigin ?? message.caller, account)
-
+    if (this.DEBUG) {
+      debug(`Incrementing calling account nonce to ${account.nonce}`)
+    }
     if (this.DEBUG) {
       debug(`Generated CREATE contract address ${message.to}`)
     }
@@ -771,6 +781,12 @@ export default class EVM extends AsyncEventEmitter<EVMEvents> implements EVMInte
         result.execResult.logs = []
         await this.eei.revert()
         this._transientStorage.revert()
+        const account = await this.eei.getAccount(message.caller)
+        account.nonce += BigInt(1)
+        await this.eei.putAccount(message.authcallOrigin ?? message.caller, account)
+        if (this.DEBUG) {
+          debug(`Bumped calling account nonce to ${account.nonce}`)
+        }
         if (this.DEBUG) {
           debug(`message checkpoint reverted`)
         }
