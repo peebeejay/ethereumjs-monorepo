@@ -118,3 +118,20 @@ export function toType<T extends TypeOutput>(
       throw new Error('unknown outputType')
   }
 }
+
+type Falsy = false | '' | 0 | null | undefined
+
+export function isFalsy(value: unknown): value is Falsy {
+  return !!(
+    value === false ||
+    value === '' ||
+    value === 0 ||
+    value === null ||
+    typeof value === 'undefined' ||
+    value === BigInt(0)
+  )
+}
+
+export function isTruthy<T>(value: T | Falsy): value is T {
+  return !isFalsy(value)
+}
