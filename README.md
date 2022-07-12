@@ -6,6 +6,8 @@
 
 [![Code Coverage][coverage-badge]][coverage-link]
 [![Discord][discord-badge]][discord-link]
+[![gitpoap badge](https://public-api.gitpoap.io/v1/repo/ethereumjs/ethereumjs-monorepo/badge)](https://www.gitpoap.io/gh/ethereumjs/ethereumjs-monorepo)
+
 
 ## Packages
 
